@@ -3,6 +3,9 @@ import prisma from "@/lib/db";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import {generateText} from "ai"
 
+import * as Sentry from "@sentry/nextjs";
+
+
 import { createOpenAI } from '@ai-sdk/openai';
 import { createAnthropic } from "@ai-sdk/anthropic" ;
 
@@ -17,12 +20,24 @@ export const execute = inngest.createFunction(
     
     await step.sleep("pretend" , "5s") ; 
 
+    Sentry.logger.info('User triggered test log', { log_source: 'sentry_test' })
+
+    console.warn("Somehing is missing") ; 
+    console.error("this is an error i want to track") ; 
+
     const {steps : geminiSteps} = await step.ai.wrap("gemini-generate-text" , 
       generateText , 
       {
         model : google("gemini-2.5-flash") ,
         system : "You are a helpful assistant." ,
-        prompt : "who is mahadev ?"
+        prompt : "who is mahadev ?" , 
+
+        experimental_telemetry: {
+          isEnabled: true,
+          functionId: "joke_agent",
+          recordInputs: true,
+          recordOutputs: true,
+        },
       }
     ) ; 
 
@@ -31,7 +46,13 @@ export const execute = inngest.createFunction(
       {
         model : openai("gpt-4o") ,
         system : "You are a helpful assistant." ,
-        prompt : "who is mahadev ?"
+        prompt : "who is mahadev ?" , 
+        experimental_telemetry: {
+          isEnabled: true,
+          functionId: "joke_agent",
+          recordInputs: true,
+          recordOutputs: true,
+        },
       }
     ) ; 
    
@@ -40,7 +61,15 @@ export const execute = inngest.createFunction(
       {
         model : antrophic("claude-3-5-sonnet") ,
         system : "You are a helpful assistant." ,
-        prompt : "who is mahadev ?"
+        prompt : "who is mahadev ?" , 
+
+        experimental_telemetry: {
+          isEnabled: true,
+          functionId: "joke_agent",
+          recordInputs: true,
+          recordOutputs: true,
+        },
+
       }
     ) ; 
 

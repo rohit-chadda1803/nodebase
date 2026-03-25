@@ -7,10 +7,17 @@ import { inngest } from '@/inngest/client';
 
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
+import { TRPCError } from '@trpc/server/unstable-core-do-not-import';
  
 export const appRouter = createTRPCRouter({
   
   testAi: protectedProcedure.mutation(async() =>{
+      
+    //  throw new TRPCError({
+    //     code : "BAD_REQUEST" ,
+    //     message : "Something went wrong with AI provider"
+    //  })
+
       await inngest.send({
         name : "execute/ai"
       }) ; 
