@@ -76,3 +76,9 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+
+model Workflow{
+  id String @id @default(cuid()) // cuisd is a function that generates a unique string ID
+  name String
+}
