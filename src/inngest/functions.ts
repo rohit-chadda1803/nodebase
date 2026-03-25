@@ -1,23 +1,54 @@
 import { inngest } from "./client";
 import prisma from "@/lib/db";
-export const helloWorld = inngest.createFunction(
-  { id: "hello-world"   },
-  { event: "test/hello.world" },
-  async ({ event, step }) => {
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import {generateText} from "ai"
 
-    // fetching the video  . 
-    await step.sleep("fetching", "5s" ) ; 
-    // transcribing . 
-    await step.sleep("transcribing", "5s");
-    // sending transcription to Ai. 
-    await step.sleep("sending-to-ai", "5s");
+import { createOpenAI } from '@ai-sdk/openai';
+import { createAnthropic } from "@ai-sdk/anthropic" ;
+
+const google =  createGoogleGenerativeAI() ; 
+const openai = createOpenAI() ;
+const antrophic = createAnthropic() ; 
+
+export const execute = inngest.createFunction(
+  { id: "execute-ai"   },
+  { event: "execute/ai" },
+  async ({ event, step }) => {
+    
+    await step.sleep("pretend" , "5s") ; 
+
+    const {steps : geminiSteps} = await step.ai.wrap("gemini-generate-text" , 
+      generateText , 
+      {
+        model : google("gemini-2.5-flash") ,
+        system : "You are a helpful assistant." ,
+        prompt : "who is mahadev ?"
+      }
+    ) ; 
+
+    const {steps : openaiSteps} = await step.ai.wrap("openai-generate-text" , 
+      generateText , 
+      {
+        model : openai("gpt-4o") ,
+        system : "You are a helpful assistant." ,
+        prompt : "who is mahadev ?"
+      }
+    ) ; 
    
-    await step.run("create-workflow" , () => {
-         return prisma.workflow.create({
-            data :{
-                name : "workflow-from-inngest" , 
-            }
-         })
-    }) ; 
-  }
+    const {steps : anthropicSteps} = await step.ai.wrap("anthropic-generate-text" , 
+      generateText , 
+      {
+        model : antrophic("claude-3-5-sonnet") ,
+        system : "You are a helpful assistant." ,
+        prompt : "who is mahadev ?"
+      }
+    ) ; 
+
+
+    return {
+      geminiSteps , 
+      openaiSteps ,
+      anthropicSteps
+    }
+  } , 
 );
