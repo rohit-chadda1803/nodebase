@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { baseProcedure, createTRPCRouter, protectedProcedure } from '../init';
+import { baseProcedure, createTRPCRouter, premimumProcedure, protectedProcedure } from '../init';
 import prisma from '@/lib/db';
 import { create } from 'node:domain';
 
@@ -11,7 +11,7 @@ import { TRPCError } from '@trpc/server/unstable-core-do-not-import';
  
 export const appRouter = createTRPCRouter({
   
-  testAi: protectedProcedure.mutation(async() =>{
+  testAi: premimumProcedure.mutation(async() =>{
       
     //  throw new TRPCError({
     //     code : "BAD_REQUEST" ,
