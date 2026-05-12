@@ -167,8 +167,8 @@ src/
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/ShreyashXP095/automateit.git
-cd automateit
+(https://github.com/rohit-chadda1803/nodebase.git)
+cd nodebase
 npm install
 ```
 
